@@ -1,0 +1,46 @@
+@model IEnumerable<VeterinerKlinigi.Models.Pet>
+@{
+    ViewData["Title"] = "Evcil Hayvanlar";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Evcil Hayvanlar</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Yeni Evcil Hayvan</a>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Ad</th>
+            <th>Tür</th>
+            <th>Irk</th>
+            <th>Doğum Tarihi</th>
+            <th>Kilo</th>
+            <th>Sahip</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Name</td>
+                <td>@p.Species</td>
+                <td>@p.Breed</td>
+                <td>@(p.BirthDate.HasValue ? p.BirthDate.Value.ToString("dd.MM.yyyy") : "-")</td>
+                <td>@(p.Weight.HasValue ? p.Weight.Value.ToString("N2") + " kg" : "-")</td>
+                <td>@p.Owner?.FullName</td>
+                <td class="text-end">
+                    <a asp-action="Details" asp-route-id="@p.Id" class="btn btn-sm btn-outline-info">Detay</a>
+                    <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-warning">Düzenle</a>
+                    <a asp-action="Delete" asp-route-id="@p.Id" class="btn btn-sm btn-outline-danger">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Henüz evcil hayvan kaydı yok.</div>
+}

@@ -1,0 +1,70 @@
+@{
+    ViewData["Title"] = "Admin Paneli";
+}
+
+<h2>Admin Paneli</h2>
+<hr />
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h3 class="text-primary">@ViewBag.Stats.ClinicCount</h3>
+                <p class="text-muted mb-0">Klinik</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h3 class="text-primary">@ViewBag.Stats.ServiceCount</h3>
+                <p class="text-muted mb-0">Hizmet</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h3 class="text-primary">@ViewBag.Stats.VeterinarianCount</h3>
+                <p class="text-muted mb-0">Veteriner</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h3 class="text-primary">@ViewBag.Stats.PetCount</h3>
+                <p class="text-muted mb-0">Evcil Hayvan</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h3 class="text-primary">@ViewBag.Stats.AppointmentCount</h3>
+                <p class="text-muted mb-0">Randevu</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h3 class="text-warning">@ViewBag.Stats.PendingCount</h3>
+                <p class="text-muted mb-0">Bekleyen Randevu</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <h3 class="text-primary">@ViewBag.Stats.UserCount</h3>
+                <p class="text-muted mb-0">Kullanıcı</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-action="Users" class="btn btn-outline-primary">Kullanıcı Yönetimi</a>
+    <a asp-controller="Clinics" asp-action="Index" class="btn btn-outline-secondary">Klinik Yönetimi</a>
+</div>

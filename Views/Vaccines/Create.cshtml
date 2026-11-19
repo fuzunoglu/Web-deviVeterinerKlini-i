@@ -1,0 +1,40 @@
+@model VeterinerKlinigi.Models.VaccineRecord
+@{
+    ViewData["Title"] = "Yeni Aşı Kaydı";
+}
+
+<h2>Yeni Aşı Kaydı</h2>
+<hr />
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    <div class="mb-3">
+        <label asp-for="PetId" class="form-label">Evcil Hayvan</label>
+        <select asp-for="PetId" asp-items="@(new Microsoft.AspNetCore.Mvc.Rendering.SelectList(ViewBag.Pets, "Id", "Name"))" class="form-select"></select>
+        <span asp-validation-for="PetId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="VaccineName" class="form-label"></label>
+        <input asp-for="VaccineName" class="form-control" />
+        <span asp-validation-for="VaccineName" class="text-danger"></span>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="AdministeredDate" class="form-label"></label>
+            <input asp-for="AdministeredDate" type="date" class="form-control" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="NextDueDate" class="form-label"></label>
+            <input asp-for="NextDueDate" type="date" class="form-control" />
+        </div>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Notes" class="form-label"></label>
+        <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

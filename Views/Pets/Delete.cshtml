@@ -1,0 +1,20 @@
+@model VeterinerKlinigi.Models.Pet
+@{
+    ViewData["Title"] = "Evcil Hayvan Sil";
+}
+
+<h2>Evcil Hayvan Sil</h2>
+<div class="alert alert-danger">Bu evcil hayvanı silmek istediğinize emin misiniz? (Aşı ve randevu kayıtları etkilenebilir.)</div>
+<dl class="row">
+    <dt class="col-sm-3">Ad</dt>
+    <dd class="col-sm-9">@Model.Name</dd>
+    <dt class="col-sm-3">Tür</dt>
+    <dd class="col-sm-9">@Model.Species</dd>
+    <dt class="col-sm-3">Sahip</dt>
+    <dd class="col-sm-9">@Model.Owner?.FullName</dd>
+</dl>
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Sil</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>

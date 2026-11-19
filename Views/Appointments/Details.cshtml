@@ -1,0 +1,84 @@
+@model VeterinerKlinigi.Models.Appointment
+@{
+    ViewData["Title"] = "Randevu Detayı";
+}
+
+<h2>Randevu Detayı</h2>
+<hr />
+
+<dl class="row">
+    <dt class="col-sm-3">Evcil Hayvan</dt>
+    <dd class="col-sm-9">@Model.Pet?.Name (@Model.Pet?.Species)</dd>
+    <dt class="col-sm-3">Sahip</dt>
+    <dd class="col-sm-9">@Model.Pet?.Owner?.FullName</dd>
+    <dt class="col-sm-3">Hizmet</dt>
+    <dd class="col-sm-9">@Model.Service?.Name</dd>
+    <dt class="col-sm-3">Veteriner</dt>
+    <dd class="col-sm-9">@Model.Veterinarian?.FullName</dd>
+    <dt class="col-sm-3">Tarih/Saat</dt>
+    <dd class="col-sm-9">@Model.AppointmentDate.ToString("dd.MM.yyyy HH:mm")</dd>
+    <dt class="col-sm-3">Süre</dt>
+    <dd class="col-sm-9">@Model.DurationMinutes dk</dd>
+    <dt class="col-sm-3">Ücret</dt>
+    <dd class="col-sm-9">@Model.Price.ToString("N2") ₺</dd>
+    <dt class="col-sm-3">Durum</dt>
+    <dd class="col-sm-9">
+        @switch (Model.Status)
+        {
+            case VeterinerKlinigi.Models.AppointmentStatus.Bekliyor:
+                <span class="badge bg-warning text-dark">Bekliyor</span>
+                break;
+            case VeterinerKlinigi.Models.AppointmentStatus.Onaylandi:
+                <span class="badge bg-success">Onaylandı</span>
+                break;
+            case VeterinerKlinigi.Models.AppointmentStatus.Reddedildi:
+                <span class="badge bg-danger">Reddedildi</span>
+                break;
+            case VeterinerKlinigi.Models.AppointmentStatus.Tamamlandi:
+                <span class="badge bg-info text-dark">Tamamlandı</span>
+                break;
+            case VeterinerKlinigi.Models.AppointmentStatus.Iptal:
+                <span class="badge bg-secondary">İptal</span>
+                break;
+        }
+    </dd>
+    @if (!string.IsNullOrEmpty(Model.Notes))
+    {
+        <dt class="col-sm-3">Not</dt>
+        <dd class="col-sm-9">@Model.Notes</dd>
+    }
+    @if (!string.IsNullOrEmpty(Model.RejectionReason))
+    {
+        <dt class="col-sm-3">Red Nedeni</dt>
+        <dd class="col-sm-9">@Model.RejectionReason</dd>
+    }
+</dl>
+
+@if (Model.ExaminationNote != null)
+{
+    <div class="card mb-3">
+        <div class="card-header bg-info text-white">Muayene Notu</div>
+        <div class="card-body">
+            <p>@Model.ExaminationNote.Content</p>
+            <small class="text-muted">@Model.ExaminationNote.CreatedAt.ToString("dd.MM.yyyy HH:mm")</small>
+        </div>
+    </div>
+}
+
+@if (User.IsInRole("Veteriner") || User.IsInRole("Admin"))
+{
+    <div class="card mb-3">
+        <div class="card-header">Muayene Notu Ekle</div>
+        <div class="card-body">
+            <form asp-action="AddNote" method="post">
+                <input type="hidden" name="appointmentId" value="@Model.Id" />
+                <div class="mb-3">
+                    <textarea name="content" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Not Ekle</button>
+            </form>
+        </div>
+    </div>
+}
+
+<a asp-action="Index" class="btn btn-secondary">Geri</a>

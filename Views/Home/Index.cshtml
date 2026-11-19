@@ -1,0 +1,68 @@
+﻿@{
+    ViewData["Title"] = "Anasayfa";
+}
+
+<div class="text-center mb-5">
+    <h1 class="display-5 fw-bold">🐾 Veteriner Kliniği Randevu ve Hasta Takip Sistemi</h1>
+    <p class="lead text-muted">
+        Evcil hayvanlarınızın sağlığı için modern, hızlı ve güvenli randevu sistemi.
+    </p>
+</div>
+
+<div class="row g-4 mb-5">
+    <div class="col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <h2 class="fw-bold text-primary">@ViewBag.ClinicCount</h2>
+                <p class="text-muted mb-0">Klinik</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <h2 class="fw-bold text-primary">@ViewBag.ServiceCount</h2>
+                <p class="text-muted mb-0">Hizmet</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <h2 class="fw-bold text-primary">@ViewBag.VeterinarianCount</h2>
+                <p class="text-muted mb-0">Veteriner Hekim</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <h2 class="fw-bold text-warning">@ViewBag.UpcomingVaccines</h2>
+                <p class="text-muted mb-0">Yaklaşan Aşı (30 gün)</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (User.Identity?.IsAuthenticated != true)
+{
+    <div class="alert alert-info text-center">
+        Randevu almak, evcil hayvanlarınızı ve aşı kayıtlarınızı yönetmek için
+        <a asp-controller="Account" asp-action="Login" class="alert-link">giriş yapın</a> veya
+        <a asp-controller="Account" asp-action="Register" class="alert-link">üye olun</a>.
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        <div class="col-md-4">
+            <a asp-controller="Appointments" asp-action="Create" class="btn btn-primary btn-lg w-100">📅 Randevu Al</a>
+        </div>
+        <div class="col-md-4">
+            <a asp-controller="Pets" asp-action="Index" class="btn btn-outline-primary btn-lg w-100">🐾 Evcil Hayvanlarım</a>
+        </div>
+        <div class="col-md-4">
+            <a asp-controller="Vaccines" asp-action="Index" class="btn btn-outline-primary btn-lg w-100">💉 Aşı Kayıtlarım</a>
+        </div>
+    </div>
+}

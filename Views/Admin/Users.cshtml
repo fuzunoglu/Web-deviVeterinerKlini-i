@@ -1,0 +1,47 @@
+@model IEnumerable<VeterinerKlinigi.Models.ApplicationUser>
+@{
+    var roles = ViewBag.Roles as Dictionary<string, IList<string>>;
+    ViewData["Title"] = "Kullanıcılar";
+}
+
+<h2>Kullanıcılar</h2>
+<hr />
+
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>E-posta</th>
+            <th>Ad Soyad</th>
+            <th>Mevcut Rol</th>
+            <th>Rol Ata</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Email</td>
+                <td>@u.FullName</td>
+                <td>
+                    @foreach (var r in roles![u.Id])
+                    {
+                        <span class="badge bg-primary">@r</span>
+                    }
+                </td>
+                <td>
+                    <form asp-action="AssignRole" method="post" class="d-flex gap-2">
+                        <input type="hidden" name="userId" value="@u.Id" />
+                        <select name="role" class="form-select form-select-sm" style="width: auto;">
+                            <option value="Admin">Admin</option>
+                            <option value="Veteriner">Veteriner</option>
+                            <option value="Uye">Üye</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-outline-primary">Ata</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">Geri</a>

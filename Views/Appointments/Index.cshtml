@@ -1,0 +1,104 @@
+@model IEnumerable<VeterinerKlinigi.Models.Appointment>
+@using VeterinerKlinigi.Models
+@{
+    ViewData["Title"] = "Randevular";
+}
+
+<h2>Randevular</h2>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Tarih/Saat</th>
+            <th>Evcil Hayvan</th>
+            <th>Hizmet</th>
+            <th>Veteriner</th>
+            <th>Süre</th>
+            <th>Ücret</th>
+            <th>Durum</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var a in Model)
+        {
+            <tr>
+                <td>@a.AppointmentDate.ToString("dd.MM.yyyy HH:mm")</td>
+                <td>@a.Pet?.Name</td>
+                <td>@a.Service?.Name</td>
+                <td>@a.Veterinarian?.FullName</td>
+                <td>@a.DurationMinutes dk</td>
+                <td>@a.Price.ToString("N2") ₺</td>
+                <td>
+                    @switch (a.Status)
+                    {
+                        case AppointmentStatus.Bekliyor:
+                            <span class="badge bg-warning text-dark">Bekliyor</span>
+                            break;
+                        case AppointmentStatus.Onaylandi:
+                            <span class="badge bg-success">Onaylandı</span>
+                            break;
+                        case AppointmentStatus.Reddedildi:
+                            <span class="badge bg-danger">Reddedildi</span>
+                            break;
+                        case AppointmentStatus.Tamamlandi:
+                            <span class="badge bg-info text-dark">Tamamlandı</span>
+                            break;
+                        case AppointmentStatus.Iptal:
+                            <span class="badge bg-secondary">İptal</span>
+                            break;
+                    }
+                </td>
+                <td class="text-end">
+                    <a asp-action="Details" asp-route-id="@a.Id" class="btn btn-sm btn-outline-info">Detay</a>
+                    @if (User.IsInRole("Veteriner") || User.IsInRole("Admin"))
+                    {
+                        if (a.Status == AppointmentStatus.Bekliyor)
+                        {
+                            <form asp-action="Approve" asp-route-id="@a.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-success">Onayla</button>
+                            </form>
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal_@a.Id">Reddet</button>
+                        }
+                        else if (a.Status == AppointmentStatus.Onaylandi)
+                        {
+                            <form asp-action="Complete" asp-route-id="@a.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-info">Tamamla</button>
+                            </form>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Reddetme Modalları -->
+@foreach (var a in Model.Where(x => x.Status == AppointmentStatus.Bekliyor))
+{
+    <div class="modal fade" id="rejectModal_@a.Id" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="Reject" asp-route-id="@a.Id" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Randevuyu Reddet</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <label class="form-label">Reddetme Nedeni</label>
+                        <textarea name="reason" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-danger">Reddet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Henüz randevu yok.</div>
+}

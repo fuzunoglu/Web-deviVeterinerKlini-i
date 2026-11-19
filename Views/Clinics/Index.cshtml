@@ -1,0 +1,42 @@
+@model IEnumerable<VeterinerKlinigi.Models.Clinic>
+@{
+    ViewData["Title"] = "Klinikler";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Klinikler</h2>
+    <a asp-action="Create" class="btn btn-primary">+ Yeni Klinik</a>
+</div>
+
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Ad</th>
+            <th>Telefon</th>
+            <th>E-posta</th>
+            <th>Çalışma Saatleri</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Name</td>
+                <td>@c.Phone</td>
+                <td>@c.Email</td>
+                <td>@c.OpeningTime.ToString("hh\\:mm") - @c.ClosingTime.ToString("hh\\:mm")</td>
+                <td class="text-end">
+                    <a asp-action="Details" asp-route-id="@c.Id" class="btn btn-sm btn-outline-info">Detay</a>
+                    <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-sm btn-outline-warning">Düzenle</a>
+                    <a asp-action="Delete" asp-route-id="@c.Id" class="btn btn-sm btn-outline-danger">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Henüz klinik kaydı yok.</div>
+}

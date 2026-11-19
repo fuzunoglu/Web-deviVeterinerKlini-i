@@ -1,0 +1,124 @@
+@{
+    ViewData["Title"] = "Randevu Al";
+}
+
+<h2>Randevu Al</h2>
+<hr />
+
+<form asp-action="Create" method="post" id="appointmentForm">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Evcil Hayvan</label>
+            <select name="petId" class="form-select" required>
+                <option value="">Seçiniz...</option>
+                @foreach (var p in (List<VeterinerKlinigi.Models.Pet>)ViewBag.Pets)
+                {
+                    <option value="@p.Id">@p.Name (@p.Species)</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Hizmet</label>
+            <select name="serviceId" id="serviceSelect" class="form-select" required>
+                <option value="">Seçiniz...</option>
+                @foreach (var s in (List<VeterinerKlinigi.Models.Service>)ViewBag.Services)
+                {
+                    <option value="@s.Id" data-duration="@s.DurationMinutes" data-price="@s.Price">@s.Name (@s.DurationMinutes dk - @s.Price.ToString("N2") ₺)</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Tarih</label>
+            <input type="date" id="dateInput" name="date" class="form-control" required
+                   min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Veteriner</label>
+            <select name="veterinarianId" id="vetSelect" class="form-select" required>
+                <option value="">Önce hizmet ve tarih seçiniz...</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Uygun Saatler</label>
+        <div id="slotsContainer" class="d-flex flex-wrap gap-2">
+            <span class="text-muted">Hizmet, tarih ve veteriner seçildikten sonra saatler listelenecek.</span>
+        </div>
+        <input type="hidden" name="appointmentDate" id="appointmentDate" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Not (isteğe bağlı)</label>
+        <textarea name="notes" class="form-control" rows="2"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Randevuyu Oluştur</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>
+
+@section Scripts {
+    <script>
+        const serviceSelect = document.getElementById('serviceSelect');
+        const dateInput = document.getElementById('dateInput');
+        const vetSelect = document.getElementById('vetSelect');
+        const slotsContainer = document.getElementById('slotsContainer');
+        const appointmentDateInput = document.getElementById('appointmentDate');
+        const submitBtn = document.getElementById('submitBtn');
+
+        async function loadVeterinarians() {
+            const serviceId = serviceSelect.value;
+            const date = dateInput.value;
+            if (!serviceId || !date) return;
+            vetSelect.innerHTML = '<option value="">Yükleniyor...</option>';
+            slotsContainer.innerHTML = '';
+            appointmentDateInput.value = '';
+            submitBtn.disabled = true;
+            const res = await fetch(`/Appointments/AvailableVeterinarians?serviceId=${serviceId}&date=${date}`);
+            const vets = await res.json();
+            vetSelect.innerHTML = '<option value="">Seçiniz...</option>';
+            vets.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.id;
+                opt.textContent = v.name;
+                vetSelect.appendChild(opt);
+            });
+            if (vets.length === 0) {
+                vetSelect.innerHTML = '<option value="">Uygun veteriner bulunamadı</option>';
+            }
+        }
+
+        async function loadSlots() {
+            const serviceId = serviceSelect.value;
+            const vetId = vetSelect.value;
+            const date = dateInput.value;
+            if (!serviceId || !vetId || !date) return;
+            slotsContainer.innerHTML = '<span class="text-muted">Yükleniyor...</span>';
+            appointmentDateInput.value = '';
+            submitBtn.disabled = true;
+            const res = await fetch(`/Appointments/AvailableSlots?veterinarianId=${vetId}&serviceId=${serviceId}&date=${date}`);
+            const slots = await res.json();
+            slotsContainer.innerHTML = '';
+            if (slots.length === 0) {
+                slotsContainer.innerHTML = '<span class="text-muted">Bu veteriner için uygun saat bulunamadı.</span>';
+                return;
+            }
+            slots.forEach(s => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn btn-outline-primary btn-sm';
+                btn.textContent = s.label;
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#slotsContainer button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    appointmentDateInput.value = s.start;
+                    submitBtn.disabled = false;
+                });
+                slotsContainer.appendChild(btn);
+            });
+        }
+
+        serviceSelect.addEventListener('change', loadVeterinarians);
+        dateInput.addEventListener('change', loadVeterinarians);
+        vetSelect.addEventListener('change', loadSlots);
+    </script>
+}
